@@ -34,17 +34,15 @@ var getCreateTemplate = function (parameters) {
     return template;
 }
 
-let createDetail = function (parameters) {
-    console.log(parameters)
+let createDetail = function (user, parameters) {
     return new Promise(function (resolve, reject) {
         let template = getCreateTemplate(parameters);
-        console.log(template)
         let details = new Details(template);
         details.save(function (err, data) {
             if (!err) {
                 resolve(data)
             } else {
-             //   LOGGER.logErrorMessage('CreateDetails', err, template);
+                //   LOGGER.logErrorMessage('CreateDetails', err, template);
                 reject(new Error('Failed to create Details for the user'));
             }
         });

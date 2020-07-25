@@ -7,6 +7,8 @@ var submitDetails = function (userId, parameters) {
     return detailsOperations.createDetail(userId, parameters)
         .then(function(response){
             return Promise.resolve(response);
+        }).catch(function(err){
+            return Promise.resolve(err)
         })
 }
 
