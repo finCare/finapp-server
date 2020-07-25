@@ -54,8 +54,10 @@ router.post('/submitDetails', function (req, res) {
 
         DetailsController.submitDetails(user, parameters)
             .then(function (response) {
-                RESPONSE.sendOkay(res,response);
-            })
+                RESPONSE.sendOkay(res,{status:'Success', data: response});
+            }).catch(function(err){
+                RESPONSE.sendOkay(res, {status: 'Failure', data: err})
+        })
 });
 
 module.exports = router;
