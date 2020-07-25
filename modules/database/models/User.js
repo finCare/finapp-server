@@ -4,23 +4,21 @@ const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
   email: { type: String, unique: true },
+  firstname: {type: String},
+  lastname: {type: String},
+
   password: String,
   passwordResetToken: String,
   passwordResetExpires: Date,
   emailVerificationToken: String,
   emailVerified: Boolean,
 
-  snapchat: String,
   facebook: String,
-  twitter: String,
   google: String,
-  github: String,
   instagram: String,
-  linkedin: String,
-  steam: String,
-  twitch: String,
-  quickbooks: String,
   tokens: Array,
+
+  details: { type: String, ref: 'Details' },
 
   profile: {
     name: String,

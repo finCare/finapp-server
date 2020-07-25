@@ -845,7 +845,7 @@ exports.getBooks = (req, res) => {
 
 **Step 4.** Import that controller in `app.js`.
 ```js
-const bookController = require('./controllers/book');
+const bookController = require('./modules/controller/book');
 ```
 
 **Step 5.** Create `books.pug` template.

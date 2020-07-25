@@ -1,6 +1,8 @@
 /**
  * Module dependencies.
  */
+global.__BASE__ = __dirname + '/';
+
 const express = require('express');
 const compression = require('compression');
 const session = require('express-session');
@@ -29,10 +31,10 @@ dotenv.config({ path: '.env.example' });
 /**
  * Controllers (route handlers).
  */
-const homeController = require('./controllers/home');
-const userController = require('./controllers/user');
-const apiController = require('./controllers/api');
-const contactController = require('./controllers/contact');
+const homeController = require('./routes/internal/home');
+const userController = require('./routes/internal/user');
+const apiController = require('./routes/internal/api');
+const contactController = require('./routes/internal/contact');
 
 /**
  * API keys and Passport configuration.
@@ -87,16 +89,16 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
-app.use((req, res, next) => {
-  if (req.path === '/api/upload') {
-    // Multer multipart/form-data handling needs to occur before the Lusca CSRF check.
-    next();
-  } else {
-    lusca.csrf()(req, res, next);
-  }
-});
-app.use(lusca.xframe('SAMEORIGIN'));
-app.use(lusca.xssProtection(true));
+// app.use((req, res, next) => {
+//   if (req.path === '/api/upload') {
+//     // Multer multipart/form-data handling needs to occur before the Lusca CSRF check.
+//     next();
+//   } else {
+//     lusca.csrf()(req, res, next);
+//   }
+// });
+// app.use(lusca.xframe('SAMEORIGIN'));
+// app.use(lusca.xssProtection(true));
 app.disable('x-powered-by');
 app.use((req, res, next) => {
   res.locals.user = req.user;
@@ -124,7 +126,7 @@ app.use('/js/lib', express.static(path.join(__dirname, 'node_modules/jquery/dist
 app.use('/webfonts', express.static(path.join(__dirname, 'node_modules/@fortawesome/fontawesome-free/webfonts'), { maxAge: 31557600000 }));
 
 /**
- * Primary app routes.
+ * Primary app service.
  */
 app.get('/', homeController.index);
 app.get('/login', userController.getLogin);
@@ -147,26 +149,12 @@ app.post('/account/delete', passportConfig.isAuthenticated, userController.postD
 app.get('/account/unlink/:provider', passportConfig.isAuthenticated, userController.getOauthUnlink);
 
 /**
- * API examples routes.
+ * API examples service.
  */
 app.get('/api', apiController.getApi);
-app.get('/api/lastfm', apiController.getLastfm);
-app.get('/api/nyt', apiController.getNewYorkTimes);
-app.get('/api/steam', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getSteam);
-app.get('/api/stripe', apiController.getStripe);
-app.post('/api/stripe', apiController.postStripe);
-app.get('/api/scraping', apiController.getScraping);
-app.get('/api/twilio', apiController.getTwilio);
-app.post('/api/twilio', apiController.postTwilio);
-app.get('/api/clockwork', apiController.getClockwork);
-app.post('/api/clockwork', apiController.postClockwork);
-app.get('/api/foursquare', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getFoursquare);
-app.get('/api/tumblr', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getTumblr);
+
 app.get('/api/facebook', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getFacebook);
-app.get('/api/github', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getGithub);
-app.get('/api/twitter', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getTwitter);
-app.post('/api/twitter', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.postTwitter);
-app.get('/api/twitch', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getTwitch);
+
 app.get('/api/instagram', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getInstagram);
 app.get('/api/paypal', apiController.getPayPal);
 app.get('/api/paypal/success', apiController.getPayPalSuccess);
@@ -174,17 +162,15 @@ app.get('/api/paypal/cancel', apiController.getPayPalCancel);
 app.get('/api/lob', apiController.getLob);
 app.get('/api/upload', lusca({ csrf: true }), apiController.getFileUpload);
 app.post('/api/upload', upload.single('myFile'), lusca({ csrf: true }), apiController.postFileUpload);
-app.get('/api/pinterest', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getPinterest);
-app.post('/api/pinterest', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.postPinterest);
+
 app.get('/api/here-maps', apiController.getHereMaps);
 app.get('/api/google-maps', apiController.getGoogleMaps);
 app.get('/api/google/drive', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getGoogleDrive);
 app.get('/api/chart', apiController.getChart);
 app.get('/api/google/sheets', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getGoogleSheets);
-app.get('/api/quickbooks', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getQuickbooks);
 
 /**
- * OAuth authentication routes. (Sign in)
+ * OAuth authentication service. (Sign in)
  */
 app.get('/auth/instagram', passport.authenticate('instagram', { scope: ['basic', 'public_content'] }));
 app.get('/auth/instagram/callback', passport.authenticate('instagram', { failureRedirect: '/login' }), (req, res) => {
@@ -220,7 +206,7 @@ app.get('/auth/twitch/callback', passport.authenticate('twitch', { failureRedire
 });
 
 /**
- * OAuth authorization routes. (API examples)
+ * OAuth authorization service. (API examples)
  */
 app.get('/auth/foursquare', passport.authorize('foursquare'));
 app.get('/auth/foursquare/callback', passport.authorize('foursquare', { failureRedirect: '/api' }), (req, res) => {
@@ -242,6 +228,21 @@ app.get('/auth/quickbooks', passport.authorize('quickbooks', { scope: ['com.intu
 app.get('/auth/quickbooks/callback', passport.authorize('quickbooks', { failureRedirect: '/login' }), (req, res) => {
   res.redirect(req.session.returnTo);
 });
+
+/****************************************************/
+/******************* Routes Setup *******************/
+/****************************************************/
+var SERVICE_DETAILS = require(__BASE__ + "routes/service/details");
+var SERVICE_AUTHENTICATE = require(__BASE__ + "routes/service/authenticate");
+
+/**
+ * Details api
+ */
+
+app.use('/service/details', SERVICE_DETAILS);
+app.use('/service/authenticate', SERVICE_AUTHENTICATE);
+
+
 
 /**
  * Error Handler.
