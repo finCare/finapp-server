@@ -16,7 +16,6 @@ const getCreateTemplate = function(parameters) {
       case "isSpouseWorking":
       case "ageSpouse":
       case "numberOfKids":
-      case "kids":
       case "disabilityPresent":
       case "isHavingCar":
       case "isHavingCarInsurance":
@@ -27,7 +26,12 @@ const getCreateTemplate = function(parameters) {
         break;
     }
   }
-
+  if (parameters.kids !== undefined) {
+    template.kids = [];
+    parameters.kids.forEach(item => {
+      template.kids.push(item);
+    });
+  }
   template.create_time = new Date();
 
   return template;
@@ -57,7 +61,12 @@ const getUpdateTemplate = function(parameters) {
         break;
     }
   }
-
+  if (parameters.kids !== undefined) {
+    template.kids = [];
+    parameters.kids.forEach(item => {
+      template.kids.push(item);
+    });
+  }
   template.update_time = new Date();
 
   return template;
@@ -67,6 +76,7 @@ const createDetail = function(user, parameters) {
   return new Promise((resolve, reject) => {
     const template = getCreateTemplate(parameters);
     const details = new Details(template);
+    console.log(template);
     details.save((err, data) => {
       if (!err) {
         resolve(data);
@@ -84,7 +94,6 @@ const updateDetail = function(user, parameters) {
     const details = new Details(template);
     details.findAndModify({ user }, template, (err, data) => {
       if (!err) {
-        console.log("dafa", data);
         resolve(data);
       } else {
         //   LOGGER.logErrorMessage('CreateDetails', err, template);
