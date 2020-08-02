@@ -1,18 +1,24 @@
-var LOGGER = require(__BASE__ + "modules/utils/Logger");
-var detailsOperations = require(__BASE__ + "modules/database/accessors/details_operations");
-var Promise = require('bluebird');
+// eslint-disable-next-line no-undef,import/no-dynamic-require
+const detailsOperations = require(`${__BASE__}modules/database/accessors/details_operations`);
+const Promise = require("bluebird");
 
-var submitDetails = function (userId, parameters) {
+const submitDetails = function(userId, parameters) {
+  return detailsOperations
+    .createDetail(userId, parameters)
+    .then(response => Promise.resolve(response))
+    .catch(err => Promise.resolve(err));
+};
 
-    return detailsOperations.createDetail(userId, parameters)
-        .then(function(response){
-            return Promise.resolve(response);
-        }).catch(function(err){
-            return Promise.resolve(err)
-        })
-}
+const updateDetails = function(userId, parameters) {
+  return detailsOperations
+    .updateDetail(userId, parameters)
+    .then(response => {
+      Promise.resolve(response);
+    })
+    .catch(err => Promise.resolve(err));
+};
 
 module.exports = {
-    submitDetails: submitDetails
-
-}
+  submitDetails,
+  updateDetails
+};

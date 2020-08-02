@@ -1,9 +1,12 @@
+// eslint-disable-next-line no-undef,import/no-dynamic-require
 const Details = require(`${__BASE__}modules/database/models/Details`);
 const Promise = require("bluebird");
 
 const getCreateTemplate = function(parameters) {
   const template = {};
+  // eslint-disable-next-line guard-for-in,no-restricted-syntax
   for (const key in parameters) {
+    // eslint-disable-next-line default-case
     switch (key) {
       case "user":
       case "age":
@@ -32,13 +35,16 @@ const getCreateTemplate = function(parameters) {
 
 const getUpdateTemplate = function(parameters) {
   const template = {};
+  // eslint-disable-next-line guard-for-in,no-restricted-syntax
   for (const key in parameters) {
+    // eslint-disable-next-line default-case
     switch (key) {
       case "age":
       case "monthlyIncome":
       case "isMarried":
       case "isSpouseWorking":
       case "ageSpouse":
+      case "gender":
       case "numberOfKids":
       case "kids":
       case "disabilityPresent":
@@ -76,8 +82,9 @@ const updateDetail = function(user, parameters) {
   return new Promise((resolve, reject) => {
     const template = getUpdateTemplate(parameters);
     const details = new Details(template);
-    details.findOneAndUpdate({ user }, template, (err, data) => {
+    details.findAndModify({ user }, template, (err, data) => {
       if (!err) {
+        console.log("dafa", data);
         resolve(data);
       } else {
         //   LOGGER.logErrorMessage('CreateDetails', err, template);
