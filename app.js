@@ -258,11 +258,34 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 /**
+ * Read from mongoAtlas and get results
+ */
+app.set('view engine', 'ejs')
+const MongoClient = require('mongodb').MongoClient
+MongoClient.connect(process.env.MONGODB_URI, {
+    useUnifiedTopology: true
+}).then(client => {
+    console.log("Connected to database")
+    const db = client.db('test')
+    app.get('/:id', (req, res) => {
+        db.collection('details').find({user: req.params.id}).toArray()
+          .then(results => {         
+                const result = require('./Rules/rules')
+                var resultArray = result.ruleEngine(results)
+                res.render('results.ejs', { data : resultArray })
+          })
+          .catch(error => console.error(error))
+      })
+}).catch(error => console.error(error))
+
+
+/**
  * Start Express server.
  */
 app.listen(app.get('port'), () => {
   console.log('%s App is running at http://localhost:%d in %s mode', chalk.green('✓'), app.get('port'), app.get('env'));
   console.log('  Press CTRL-C to stop\n');
 });
+
 
 module.exports = app;
