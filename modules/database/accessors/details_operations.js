@@ -1,9 +1,13 @@
+// eslint-disable-next-line import/no-dynamic-require,no-undef
 const Details = require(`${__BASE__}modules/database/models/Details`);
 const Promise = require("bluebird");
+const result = require("../../../Rules/rules");
 
 const getCreateTemplate = function(parameters) {
   const template = {};
+  // eslint-disable-next-line guard-for-in,no-restricted-syntax
   for (const key in parameters) {
+    // eslint-disable-next-line default-case
     switch (key) {
       case "user":
       case "age":
@@ -32,7 +36,9 @@ const getCreateTemplate = function(parameters) {
 
 const getUpdateTemplate = function(parameters) {
   const template = {};
+  // eslint-disable-next-line guard-for-in,no-restricted-syntax
   for (const key in parameters) {
+    // eslint-disable-next-line default-case
     switch (key) {
       case "age":
       case "monthlyIncome":
@@ -55,6 +61,33 @@ const getUpdateTemplate = function(parameters) {
   template.update_time = new Date();
 
   return template;
+};
+
+const generateReport = function(parameters) {
+  return new Promise((resolve, reject) => {
+    Details.findOne({ user: parameters.user }, (err, data) => {
+      if (err) reject(err);
+      if (data) {
+        const resultArray = result.ruleEngine(data);
+        resolve(resultArray);
+      } else {
+        resolve({ msg: "Failure" });
+      }
+    });
+  });
+};
+
+const getDetail = function(user) {
+  return new Promise((resolve, reject) => {
+    Details.findOne({ user: user }, (err, data) => {
+      if (err) reject(err);
+      if (data) {
+        resolve(data);
+      } else {
+        resolve({ msg: "Failure" });
+      }
+    });
+  });
 };
 
 const createDetail = function(user, parameters) {
@@ -88,6 +121,8 @@ const updateDetail = function(user, parameters) {
 };
 
 module.exports = {
+  getDetail,
   createDetail,
-  updateDetail
+  updateDetail,
+  generateReport
 };

@@ -1,63 +1,81 @@
-var express = require('express');
-var router = express.Router();
-var RESPONSE = require(__BASE__ + "modules/controller/handler/ResponseHandler");
-var DetailsController = require(__BASE__ + "modules/controller/DetailsController");
+const express = require("express");
 
-router.post('/submitDetails', function (req, res) {
+const router = express.Router();
+const RESPONSE = require(`${__BASE__}modules/controller/handler/ResponseHandler`);
+const DetailsController = require(`${__BASE__}modules/controller/DetailsController`);
+
+router.post("/submitDetails", (req, res) => {
   //  var decoded = TokenHandler.getUserIdAndRoleFromRequest(req);
-    var user = req.body.user;
-    var age = req.body.age;
-    var monthlyIncome = req.body.monthlyIncome;
-    var gender = req.body.gender;
+  const { user } = req.body;
+  const { age } = req.body;
+  const { monthlyIncome } = req.body;
+  const { gender } = req.body;
 
-    var isMarried = req.body.isMarried;
+  const { isMarried } = req.body;
 
-    var isSpouseWorking = req.body.isSpouseWorking;
-    var ageSpouse = req.body.ageSpouse;
+  const { isSpouseWorking } = req.body;
+  const { ageSpouse } = req.body;
 
-    var numberOfKids = req.body.numberOfKids;
-    var kids = req.body.kids;
-    var disabilityPresent = req.body.disabilityPresent;
+  const { numberOfKids } = req.body;
+  const { kids } = req.body;
+  const { disabilityPresent } = req.body;
 
-    var isHavingCar = req.body.isHavingCar;
-    var isHavingCarInsurance = req.body.isHavingCarInsurance;
+  const { isHavingCar } = req.body;
+  const { isHavingCarInsurance } = req.body;
 
-    var isHavingHealthInsurance = req.body.isHavingHealthInsurance;
-    var isHavingLifeInsurance = req.body.isHavingLifeInsurance;
-    var isHavingTermInsurance = req.body.isHavingTermInsurance;
+  const { isHavingHealthInsurance } = req.body;
+  const { isHavingLifeInsurance } = req.body;
+  const { isHavingTermInsurance } = req.body;
 
+  const parameters = {};
 
-    var parameters = {};
+  if (user !== undefined) {
+    parameters.user = user;
+    parameters.age = age;
+    parameters.monthlyIncome = monthlyIncome;
+    parameters.gender = gender;
 
-    if(user!==undefined){
-        parameters.user = user;
-        parameters.age = age;
-        parameters.monthlyIncome = monthlyIncome;
-        parameters.gender = gender;
+    parameters.isMarried = isMarried;
 
-        parameters.isMarried = isMarried;
+    parameters.isSpouseWorking = isSpouseWorking;
+    parameters.ageSpouse = ageSpouse;
 
-        parameters.isSpouseWorking = isSpouseWorking;
-        parameters.ageSpouse = ageSpouse;
+    parameters.numberOfKids = numberOfKids;
+    parameters.kids = kids;
 
-        parameters.numberOfKids = numberOfKids;
-        parameters.kids = kids;
+    parameters.disabilityPresent = disabilityPresent;
+    parameters.isHavingCar = isHavingCar;
+    parameters.isHavingCarInsurance = isHavingCarInsurance;
 
-        parameters.disabilityPresent = disabilityPresent;
-        parameters.isHavingCar = isHavingCar;
-        parameters.isHavingCarInsurance = isHavingCarInsurance;
+    parameters.isHavingHealthInsurance = isHavingHealthInsurance;
+    parameters.isHavingLifeInsurance = isHavingLifeInsurance;
+    parameters.isHavingTermInsurance = isHavingTermInsurance;
+  }
 
-        parameters.isHavingHealthInsurance = isHavingHealthInsurance;
-        parameters.isHavingLifeInsurance = isHavingLifeInsurance;
-        parameters.isHavingTermInsurance = isHavingTermInsurance;
-    }
+  DetailsController.submitDetails(user, parameters)
+    .then(response => {
+      DetailsController.generateReport(response).then(data => {
+        RESPONSE.sendOkay(res, { status: "Success", data });
+      });
+    })
+    .catch(err => {
+      RESPONSE.sendOkay(res, { status: "Failure", data: err });
+    });
+});
 
-        DetailsController.submitDetails(user, parameters)
-            .then(function (response) {
-                RESPONSE.sendOkay(res,{status:'Success', data: response});
-            }).catch(function(err){
-                RESPONSE.sendOkay(res, {status: 'Failure', data: err})
-        })
+router.post("/getDetails", (req, res) => {
+  const { user } = req.body;
+  if (user === undefined) {
+    RESPONSE.sendError(res, { status: "Failure", data: "User not sent" });
+  }
+
+  DetailsController.getDetails(user)
+    .then(response => {
+      RESPONSE.sendOkay(res, { status: "Success", data: response });
+    })
+    .catch(err => {
+      RESPONSE.sendOkay(res, { status: "Failure", data: err });
+    });
 });
 
 module.exports = router;
