@@ -59,7 +59,7 @@ router.post("/submitDetails", (req, res) => {
       });
     })
     .catch(err => {
-      RESPONSE.sendOkay(res, { status: "Failure", data: err });
+      RESPONSE.sendError(res, { status: "Failure", data: err });
     });
 });
 
@@ -74,7 +74,7 @@ router.post("/getDetails", (req, res) => {
       RESPONSE.sendOkay(res, { status: "Success", data: response });
     })
     .catch(err => {
-      RESPONSE.sendOkay(res, { status: "Failure", data: err });
+      RESPONSE.sendError(res, { status: "Failure", data: err });
     });
 });
 

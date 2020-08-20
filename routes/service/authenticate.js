@@ -40,7 +40,7 @@ router.post("/signup", (req, res) => {
       }
     })
     .catch(err => {
-      RESPONSE.sendOkay(res, {
+      RESPONSE.sendError(res, {
         status: "Failure",
         message: "Error in signing up the user"
       });
@@ -58,7 +58,10 @@ router.post("/login", (req, res, next) => {
 
   if (validationErrors.length) {
     req.flash("errors", validationErrors);
-    return res.redirect("/signup");
+    RESPONSE.sendError(res, {
+      status: "Failure",
+      message: "Validation failed. Please enter the correct information"
+    });
   }
   req.body.email = validator.normalizeEmail(req.body.email, {
     gmail_remove_dots: false
@@ -75,10 +78,12 @@ router.post("/login", (req, res, next) => {
     }
     if (!user) {
       req.flash("errors", info);
-      return res.redirect("/login");
+      RESPONSE.sendError(res, {
+        status: "Failure",
+        message: "User not available"
+      });
     }
     req.logIn(user, err => {
-      console.log("user:", user);
       if (err) {
         return next(err);
       }
