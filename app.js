@@ -75,7 +75,7 @@ app.use(function(req, res, next) {
   next();
 });
 app.set("host", process.env.HOST || "0.0.0.0");
-app.set("port", process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 3000);
+app.set("port", process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8080);
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "pug");
 app.use(expressStatusMonitor());
