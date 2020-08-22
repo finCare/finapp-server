@@ -67,7 +67,7 @@ mongoose.connection.on("error", err => {
  * Express configuration.
  */
 app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "http://52.66.206.56/"); // update to match the domain you will make the request from
+  res.header("Access-Control-Allow-Origin", "*"); // update to match the domain you will make the request from
   res.header(
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept"
