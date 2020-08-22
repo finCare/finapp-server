@@ -67,7 +67,7 @@ mongoose.connection.on("error", err => {
  * Express configuration.
  */
 app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Origin", "http://52.66.206.56/"); // update to match the domain you will make the request from
   res.header(
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept"
@@ -438,22 +438,6 @@ if (process.env.NODE_ENV === "development") {
  * Read from mongoAtlas and get results
  */
 app.set("view engine", "ejs");
-// const MongoClient = require('mongodb').MongoClient
-// MongoClient.connect(process.env.MONGODB_URI, {
-//     useUnifiedTopology: true
-// }).then(client => {
-//     console.log("Connected to database")
-//     const db = client.db('test')
-//     app.get('/:id', (req, res) => {
-//         db.collection('details').find({user: req.params.id}).toArray()
-//           .then(results => {
-//                 const result = require('./Rules/rules')
-//                 var resultArray = result.ruleEngine(results)
-//                 res.render('results.ejs', { data : resultArray })
-//           })
-//           .catch(error => console.error(error))
-//       })
-// }).catch(error => console.error(error))
 
 /**
  * Start Express server.
