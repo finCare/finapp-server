@@ -20,6 +20,7 @@ const passport = require("passport");
 const expressStatusMonitor = require("express-status-monitor");
 const sass = require("node-sass-middleware");
 const multer = require("multer");
+const dataAPIRouter = require("./routes/internal/dataAPI");
 
 const upload = multer({ dest: path.join(__dirname, "uploads") });
 
@@ -434,10 +435,7 @@ if (process.env.NODE_ENV === "development") {
   });
 }
 
-/**
- * Read from mongoAtlas and get results
- */
-app.set("view engine", "ejs");
+app.use("/dataApi",dataAPIRouter);
 
 /**
  * Start Express server.
