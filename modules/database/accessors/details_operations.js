@@ -24,6 +24,23 @@ const getCreateTemplate = function(parameters) {
       case "isHavingHealthInsurance":
       case "isHavingLifeInsurance":
       case "isHavingTermInsurance":
+      case "isHavingBond":
+      case "isHavingCar":
+      case "isHavingCarInsurance":
+      case "isHavingCarLoan":
+      case "isHavingEPF":
+      case "isHavingGeneralInsurance":
+      case "isHavingHealthInsurance":
+      case "isHavingHomeLoan":
+      case "isHavingLifeInsurance":
+      case "isHavingMutualFund":
+      case "isHavingNPS":
+      case "isHavingPPF":
+      case "isHavingStock":
+      case "isHavingTermInsurance":
+      case "amountCashDeposit":
+      case "amountFixedDeposit":
+      case "amountPPF":
         template[key] = parameters[key];
         break;
     }
@@ -53,6 +70,23 @@ const getUpdateTemplate = function(parameters) {
       case "isHavingHealthInsurance":
       case "isHavingLifeInsurance":
       case "isHavingTermInsurance":
+      case "isHavingBond":
+      case "isHavingCar":
+      case "isHavingCarInsurance":
+      case "isHavingCarLoan":
+      case "isHavingEPF":
+      case "isHavingGeneralInsurance":
+      case "isHavingHealthInsurance":
+      case "isHavingHomeLoan":
+      case "isHavingLifeInsurance":
+      case "isHavingMutualFund":
+      case "isHavingNPS":
+      case "isHavingPPF":
+      case "isHavingStock":
+      case "isHavingTermInsurance":
+      case "amountCashDeposit":
+      case "amountFixedDeposit":
+      case "amountPPF":
         template[key] = parameters[key];
         break;
     }
@@ -98,6 +132,7 @@ const createDetail = function(user, parameters) {
       if (!err) {
         resolve(data);
       } else {
+        console.log(err);
         //   LOGGER.logErrorMessage('CreateDetails', err, template);
         reject(new Error("Failed to create Details for the user"));
       }

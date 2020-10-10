@@ -27,6 +27,19 @@ router.post("/submitDetails", (req, res) => {
   const { isHavingLifeInsurance } = req.body;
   const { isHavingTermInsurance } = req.body;
 
+  const { isHavingBond } = req.body;
+  const { isHavingCarLoan } = req.body;
+  const { isHavingEPF } = req.body;
+  const { isHavingGeneralInsurance } = req.body;
+  const { isHavingHomeLoan } = req.body;
+  const { isHavingMutualFund } = req.body;
+  const { isHavingNPS } = req.body;
+  const { isHavingPPF } = req.body;
+  const { isHavingStock } = req.body;
+  const { amountCashDeposit } = req.body;
+  const { amountFixedDeposit } = req.body;
+  const { amountPPF } = req.body;
+
   const parameters = {};
 
   if (user !== undefined) {
@@ -50,11 +63,25 @@ router.post("/submitDetails", (req, res) => {
     parameters.isHavingHealthInsurance = isHavingHealthInsurance;
     parameters.isHavingLifeInsurance = isHavingLifeInsurance;
     parameters.isHavingTermInsurance = isHavingTermInsurance;
+
+    parameters.isHavingBond = isHavingBond;
+    parameters.isHavingCarLoan = isHavingCarLoan;
+    parameters.isHavingEPF = isHavingEPF;
+    parameters.isHavingGeneralInsurance = isHavingGeneralInsurance;
+    parameters.isHavingHomeLoan = isHavingHomeLoan;
+    parameters.isHavingMutualFund = isHavingMutualFund;
+    parameters.isHavingNPS = isHavingNPS;
+    parameters.isHavingPPF = isHavingPPF;
+    parameters.isHavingStock = isHavingStock;
+    parameters.amountCashDeposit = amountCashDeposit;
+    parameters.amountFixedDeposit = amountFixedDeposit;
+    parameters.amountPPF = amountPPF;
   }
 
   DetailsController.submitDetails(user, parameters)
     .then(response => {
       DetailsController.generateReport(response).then(data => {
+        console.log("response", data);
         RESPONSE.sendOkay(res, { status: "Success", data });
       });
     })
@@ -69,6 +96,7 @@ router.post("/getDetails", (req, res) => {
     RESPONSE.sendError(res, { status: "Failure", data: "User not sent" });
   }
 
+  console.log("user", user);
   DetailsController.getDetails(user)
     .then(response => {
       RESPONSE.sendOkay(res, { status: "Success", data: response });

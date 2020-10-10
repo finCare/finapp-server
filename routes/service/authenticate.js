@@ -23,6 +23,7 @@ router.post("/signup", (req, res) => {
 
   if (validationErrors.length) {
     req.flash("errors", validationErrors);
+    console.log("eror:", validationErrors);
     return res.redirect("/signup");
   }
 
@@ -36,6 +37,7 @@ router.post("/signup", (req, res) => {
   UserController.signupUser(parameters.email, parameters)
     .then(data => {
       if (data) {
+        console.log("response slfhsadlfas", data);
         RESPONSE.sendOkay(res, { status: "Success", message: data });
       }
     })
@@ -58,7 +60,7 @@ router.post("/login", (req, res, next) => {
 
   if (validationErrors.length) {
     req.flash("errors", validationErrors);
-    RESPONSE.sendError(res, {
+    RESPONSE.sendUnAuthorized(res, {
       status: "Failure",
       message: "Validation failed. Please enter the correct information"
     });
